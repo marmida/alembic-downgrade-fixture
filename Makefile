@@ -8,15 +8,6 @@ VIRTUALENVDIR=venv
 
 .PHONY: clean check
 
-clean:
-	echo 'drop database $(DBNAME); drop user $(DBUSER);' | psql -d postgres
-	rm migrations/versions/*
-
-venv:
-	echo 'Creating python environment'
-	virtualenv venv
-	$(VIRTUALENVDIR)/bin/pip install -r requirements.txt
-
 check: venv
 	echo 'Creating database $(DBNAME) and adding user $(DBUSER)'
 	createuser -DRS $(DBUSER)
@@ -29,4 +20,12 @@ check: venv
 	# this next command fails on the following: 
 	#    sqlalchemy.exc.ProgrammingError: (ProgrammingError) syntax error at or near "stuff_id_seq"
 	PYTHONPATH=rev1 $(VIRTUALENVDIR)/bin/alembic downgrade -1
-	
+
+clean:
+	echo 'drop database $(DBNAME); drop user $(DBUSER);' | psql -d postgres
+	rm migrations/versions/*
+
+venv:
+	echo 'Creating python environment'
+	virtualenv venv
+	$(VIRTUALENVDIR)/bin/pip install -r requirements.txt
